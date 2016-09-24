@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="js/mainpage.js"></script>
     <script type="text/javascript">
+    	//Makes enter submit command while input field is selected
 		$(document).ready(function(){
 		    $('#txtCmd').keypress(function(e){
 		      if(e.keyCode==13)
@@ -27,40 +28,227 @@
 			$("#txtCmd").val('');
 
 			userInput = userInput.toLowerCase();
+			userInput = userInput.replace(/look at/g, 'look');
+
 			inputSplit = userInput.split(" ");
 
 			if(acceptedVerbs.indexOf(inputSplit[0]) === -1){
 				if(inputSplit.length > 1){
 					if(acceptedVerbs.indexOf(inputSplit[0] + " " + inputSplit[1]) === -1){
-						txtLog = txtLog + getUnknownResponse() + "\n\n";
+						txtLog += getUnknownResponse() + "\n\n";
 					} else {
-						handleValidAction();
+						txtLog += handleValidAction(inputSplit, 2, txtLog) + "\n\n";
 					}
 				} else {
-					txtLog = txtLog + getUnknownResponse() + "\n\n";
+					txtLog += getUnknownResponse() + "\n\n";
 				}		
 			} else {
-				handleValidAction();
+				txtLog += handleValidAction(inputSplit, 1, txtLog) + "\n\n";
 			}
 
 			$('#txtLog').val(txtLog);
 			$('#txtLog').scrollTop($('#txtLog')[0].scrollHeight);
 		}
 
-		function handleValidAction(){
-
-		}
-		
-
 		function getUnknownResponse(){
 			var pickedPhrase = Math.floor(Math.random() * (notAcceptedResponses.length));
 			return notAcceptedResponses[pickedPhrase];
 		}
 
+		function handleValidAction(commandString, cmdWordCount, txtLog){
+			if(cmdWordCount == 1){
+				switch(commandString[0]){
+					case "help":
+						return "Welcome to a text-based adventure game! This game is controlled using simple keywords.\n\nTo move to new rooms, type cardinal directions such as 'North', or 'South'. To interact with objects, you can use statements such as 'take wet napkin' or 'use pen on paper'. Check your inventory by typing in 'inventory' or just 'i', and don't forget to examine the room you're in or items with 'examine' or 'look at banana costume'.\n\nDon't be afraid to try out actions not described here!";
+						break;
+					case "n":
+					case "north":
+						return handleMovement("n");
+						break;
+					case "e":
+					case "east":
+						return handleMovement("e");
+						break;
+					case "s":
+					case "south":
+						return handleMovement("s");
+						break;
+					case "w":
+					case "west":
+						return handleMovement("w");
+						break;
+					case "talk":
+					case "chat":
+					case "speak":
+						//TODO: Diolauge system
+						break;
+					case "take":
+						return handleTakeObject(commandString);
+						break;
+					case "use":
+					case "activate":
+						return handleItemUse(commandString);
+						break;
+					case "open":
+						return handleItemOpen(commandString);
+						break;
+					case "i":
+					case "inventory":
+						return displayInventory();
+						break;
+					case "look":
+					case "examine":
+						return handleExamine(commandString);
+						break;		
+				}
+			} else {
+				//command word count 2 : all verbs with 2 words
+				switch(commandString[0] + " " + commandString[1]){
+					case "pick up":
+						return handleTakeObject(commandString);
+						break;
+					case "turn on":
+						return handleItemUse(commandString);
+						break;
+				}
+			}
+
+			return txtLog;
+		}
+
+		function getListOfUsableItems(){
+			//Var to send back
+			var reachableItems = [];
+
+			//Items in room
+			var currentRoom = roomCollection(currentRoomId);
+			var itemIDs = currentRoom.containedItems.split(";");
+
+			for (var i = 0; i < itemIDs.length; i++){
+				if(itemCollection[itemIDs[i]].revealed){
+					reachableItems.push(itemIDs[i]);
+					reachableItems.push(itemCollection[itemIDs[i]].interactNames)
+				}
+			}
+
+			//Inventory items
+			var inventoryIDs = inventoryItems.split(";");
+			for (var y = 0; y < inventoryIDs.length; y++){
+				reachableItems.push(inventoryIDs[y]);
+				reachableItems.push(itemCollection[inventoryIDs[y]].interactNames);
+			}
+
+			return reachableItems;
+		}
+
+		function displayInventory(){
+			var returnText = "";
+			if(inventoryItems == ""){
+				returnText = "You have nothing in your inventory.";
+			} else {
+				returnText = "Your inventory contains ";
+				var allItems = inventoryItems.split(";");
+				for (var i = 0; i < allItems.length; i++){
+					if(i!=0){
+						returnText += ", ";
+					}				
+					returnText += itemCollection[allItems[i]].name;
+				}
+			}
+			return returnText;
+		}
+
+		function handleMovement(direction){
+
+		}
+
+		function handleTakeObject(commandString){
+			var reachableItems = getListOfUsableItems();
+
+		}
+
+		function handleItemUse(commandString){
+			var reachableItems = getListOfUsableItems();
+
+		}
+
+		function handleExamine(commandString){
+			var returnString = ""
+			var reachableItems = getListOfUsableItems();
+
+			if(commandString.length == 1){
+				returnString = examineCurrentRoom();
+			} else {
+				var objectName = ""
+				for (var i = 0; i < commandString.length; i++){
+					if(i != 0){
+						objectName += commandString[i];
+					}
+				}
+
+				//TODO : update getListOfUsableItems get a way to isolate each item interactName in it's own array entry, but still be able to reach the ID.
+				//Rewrite to split interactName and put a new ID entry before each new entry to interactName? indexOf("item") will return index of array, just -1 that.
+			}
+			return returnString;
+		}
+
+		function examineCurrentRoom(){
+			var roomObject = roomCollection[currentRoomId];
+			var RoomDescription = "";
+			if(roomObject.isDark){
+				RoomDescription = roomObject.description.split(";")[1];
+			} else {
+				RoomDescription = roomObject.description.split(";")[0];
+				//Also show items
+				var objectsInRoom = roomObject.containedItems.split(";");
+				var objectString = "";
+				for (var i = 0; i < objectsInRoom.length; i++){
+					if (objectsInRoom[i].revealed){
+						if (objectString.length = 0){
+							objectString += objectsInRoom[i].name;
+						} else {
+							objectString += ", " + objectsInRoom[i].name;
+						}					
+					}
+				}
+
+				if(objectString != ""){
+					RoomDescription += "\n\nIn this room, you see " + objectString;
+				}
+
+				if(roomObject.exits = ""){
+					RoomDescription += "\n\nThis room has no exits. You should panic.";
+				} else {
+					var exitSplit = roomObject.exits.split(";");
+					RoomDescription += "\n\nYou see exits to the ";
+					for (var y = 0; y < existSplit.length; y++){
+						if(y != 0){
+							RoomDescription += ", ";
+						}
+						switch(existSplit[y]){
+							case "N":
+								RoomDescription += "north";
+								break;
+							case "S":
+								RoomDescription += "south";
+								break;
+							case "E":
+								RoomDescription += "east";
+								break;
+							case "W":
+								RoomDEscription += "west";
+								break;
+						}						
+					}
+					RoomDescription += ".";
+				}
+			}
+			return RoomDescription;		
+		}	
+
 		function startGame(){
 			$("#modalDiv").css("display", "none");
-			var roomSplit = room1.description.split(";");
-			$('#txtLog').val("Your name is BLOCKHEAD.\n\nYou live in a world where the only visible colors are black and white. Rumors are abound, however, of an ancient device known as a 'Prism' that can unlock the entire spectrum of colors that are rumored to exist between black and white.\n\nMost denounce these rumors as yet another conspiracy theory, but you, BLOCKHEAD, firmly believe that such a device exists!\n\nYou're also woefully unemployed, so at least this gives you something to do.\n\n" + roomSplit[1] + "\n\nType in 'Help' below if you need assistance in navigating this ancient form of video game.\n\n");
+			$('#txtLog').val("Your name is BLOCKHEAD.\n\nYou live in a world where the only visible colors are black and white. Rumors are abound, however, of an ancient device known as a 'Prism' that can unlock the entire spectrum of colors that are rumored to exist between black and white.\n\nMost denounce these rumors as yet another conspiracy theory, but you, BLOCKHEAD, firmly believe that such a device exists!\n\nYou're also woefully unemployed, so at least this gives you something to do.\n\n" + examineCurrentRoom() + "\n\nType in 'Help' below if you need assistance in navigating this ancient form of video game.\n\n");
 		}
 	</script>
   </head>
