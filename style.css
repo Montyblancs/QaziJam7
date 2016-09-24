@@ -1,0 +1,40 @@
+body{
+	max-width: 1000px;
+	margin: 10px auto;
+	background-color: #2a2a2a;
+	font-family: 'Roboto', sans-serif;
+}
+
+#container{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+#pictureFrame{
+	width: 100%;
+}
+
+#logContainer{
+	width: 100%;
+}
+
+#txtCmd{
+	width: 89%;
+	background-color: #000;
+	color: #EEE;
+}
+
+#btnSubmit{
+	width: 10%;
+}
+
+#txtLog{
+	width: 99%;
+	height: 400px;
+	resize: none;
+	margin-left: 2px;
+	margin-top: 4px;
+	background-color: #000;
+	color: #EEE;
+}
