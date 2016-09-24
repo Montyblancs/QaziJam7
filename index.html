@@ -17,13 +17,60 @@
 
 		function handleInput(){
 			var userInput = $("#txtCmd").val();
+			userInput = userInput.trim();
+			if(userInput.length <= 0){
+				return;
+			}
+
 			var txtLog = $('#txtLog').val();
-			$('#txtLog').val(txtLog + '> ' + userInput + '\n');
+			txtLog = txtLog + '> ' + userInput + '\n\n'
 			$("#txtCmd").val('');
+
+			userInput = userInput.toLowerCase();
+			inputSplit = userInput.split(" ");
+
+			if(acceptedVerbs.indexOf(inputSplit[0]) === -1){
+				if(inputSplit.length > 1){
+					if(acceptedVerbs.indexOf(inputSplit[0] + " " + inputSplit[1]) === -1){
+						txtLog = txtLog + getUnknownResponse() + "\n\n";
+					} else {
+						handleValidAction();
+					}
+				} else {
+					txtLog = txtLog + getUnknownResponse() + "\n\n";
+				}		
+			} else {
+				handleValidAction();
+			}
+
+			$('#txtLog').val(txtLog);
+			$('#txtLog').scrollTop($('#txtLog')[0].scrollHeight);
+		}
+
+		function handleValidAction(){
+
+		}
+		
+
+		function getUnknownResponse(){
+			var pickedPhrase = Math.floor(Math.random() * (notAcceptedResponses.length));
+			return notAcceptedResponses[pickedPhrase];
+		}
+
+		function startGame(){
+			$("#modalDiv").css("display", "none");
+			var roomSplit = room1.description.split(";");
+			$('#txtLog').val("Your name is BLOCKHEAD.\n\nYou live in a world where the only visible colors are black and white. Rumors are abound, however, of an ancient device known as a 'Prism' that can unlock the entire spectrum of colors that are rumored to exist between black and white.\n\nMost denounce these rumors as yet another conspiracy theory, but you, BLOCKHEAD, firmly believe that such a device exists!\n\nYou're also woefully unemployed, so at least this gives you something to do.\n\n" + roomSplit[1] + "\n\nType in 'Help' below if you need assistance in navigating this ancient form of video game.\n\n");
 		}
 	</script>
   </head>
   <body>
+  	<div id="modalDiv" class="modal">
+  		<div class="modal-content" onclick="startGame();">
+  			Start Game
+  		</div>
+  	</div>
+
     <div id="container" style="background: red;">
     	<div id="pictureFrame" style="background: green;">
     		Content
