@@ -87,7 +87,7 @@
 						break;
 					case "use":
 					case "activate":
-						return handleItemUse(commandString);
+						return handleItemUse(commandString, commandString[0]);
 						break;
 					case "open":
 						return handleItemOpen(commandString);
@@ -108,7 +108,7 @@
 						return handleTakeObject(commandString);
 						break;
 					case "turn on":
-						return handleItemUse(commandString);
+						return handleItemUse(commandString, commandString[0] + " " + commandString[1]);
 						break;
 				}
 			}
@@ -121,38 +121,62 @@
 			var reachableItems = [];
 
 			//Items in room
-			var currentRoom = roomCollection(currentRoomId);
-			var itemIDs = currentRoom.containedItems.split(";");
+			var currentRoom = roomCollection[currentRoomId];
 
-			for (var i = 0; i < itemIDs.length; i++){
-				if(itemCollection[itemIDs[i]].revealed){
-					reachableItems.push(itemIDs[i]);
-					reachableItems.push(itemCollection[itemIDs[i]].interactNames)
+			for (var i = 0; i < currentRoom.containedItems.length; i++){
+				if(itemCollection[currentRoom.containedItems[i]].revealed){
+					reachableItems.push(currentRoom.containedItems[i]);
+					reachableItems.push(itemCollection[currentRoom.containedItems[i]].interactNames)
 				}
 			}
 
 			//Inventory items
-			var inventoryIDs = inventoryItems.split(";");
-			for (var y = 0; y < inventoryIDs.length; y++){
-				reachableItems.push(inventoryIDs[y]);
-				reachableItems.push(itemCollection[inventoryIDs[y]].interactNames);
+			for (var y = 0; y < inventoryItems.length; y++){
+				reachableItems.push(inventoryItems[y]);
+				reachableItems.push(itemCollection[inventoryItems[y]].interactNames);
 			}
 
 			return reachableItems;
 		}
 
+		function searchForRequestedItem(commandString, itemList){
+			var foundItemID = -1;
+			var objectName = ""
+			for (var i = 0; i < commandString.length; i++){
+				if(i == 1){
+					objectName += commandString[i];
+				} else if(i > 1) {
+					objectName += " " + commandString[i];
+				}
+			}
+			
+			var locatedID = -1
+			//step 2 through array, search each interactNames array from reachableItems(itemList)
+			for (var y = 1; y < itemList.length; y = y + 2){
+				if(itemList[y].indexOf(objectName) != -1){
+					locatedID = itemList[y - 1];
+					break;
+				}
+			}
+
+			if(locatedID != -1){
+				foundItemID = locatedID;
+			}
+
+			return foundItemID;
+		}
+
 		function displayInventory(){
 			var returnText = "";
-			if(inventoryItems == ""){
+			if(inventoryItems.length <= 0){
 				returnText = "You have nothing in your inventory.";
 			} else {
 				returnText = "Your inventory contains ";
-				var allItems = inventoryItems.split(";");
-				for (var i = 0; i < allItems.length; i++){
+				for (var i = 0; i < inventoryItems.length; i++){
 					if(i!=0){
 						returnText += ", ";
 					}				
-					returnText += itemCollection[allItems[i]].name;
+					returnText += itemCollection[inventoryItems[i]].name;
 				}
 			}
 			return returnText;
@@ -167,27 +191,78 @@
 
 		}
 
-		function handleItemUse(commandString){
-			var reachableItems = getListOfUsableItems();
+		function handleItemOpen(commandString){
+			
+		}
 
+		function handleItemUse(commandString, verb){
+			var returnString = "";
+			var reachableItems = getListOfUsableItems();
+			var requestedItemID = searchForRequestedItem(commandString, reachableItems);
+			if (requestedItemID == -1){
+				returnString = "You can't use something that doesn't exist!";
+			} else {
+				if(itemCollection[requestedItemID].verbs.indexOf(verb) != -1){
+					switch(itemCollection[requestedItemID].onUse[0]){
+						case "tgl":
+							switch(itemCollection[requestedItemID].onUse[1]){
+								case "isDark":
+									if(roomCollection[currentRoomId].isDark = true){
+										roomCollection[currentRoomId].isDark = false;
+										returnString = itemCollection[requestedItemID].onUse[2];
+										break;
+									} else {
+										roomCollection[currentRoomId].isDark = true;
+										returnString = itemCollection[requestedItemID].onUse[3];
+										break;
+									}								
+							}
+							break;
+						case "txt":
+							returnString = itemCollection[requestItemID].onUse[1];
+							break;
+					}
+				}
+			}
+			return returnString;
 		}
 
 		function handleExamine(commandString){
-			var returnString = ""
-			var reachableItems = getListOfUsableItems();
+			var returnString = ""	
 
 			if(commandString.length == 1){
 				returnString = examineCurrentRoom();
 			} else {
-				var objectName = ""
-				for (var i = 0; i < commandString.length; i++){
-					if(i != 0){
-						objectName += commandString[i];
+				if(roomCollection[currentRoomId].isDark){
+					returnString = "You can't examine something in this dark room, fool! Turn the lights on!"
+				} else {
+					var objectName = ""
+					var reachableItems = getListOfUsableItems();
+					for (var i = 0; i < commandString.length; i++){
+						if(i == 1){
+							objectName += commandString[i];
+						} else if(i > 1) {
+							objectName += " " + commandString[i];
+						}
+					}
+					
+					var locatedID = -1
+					//step 2 through array, search each interactNames array from reachableItems
+					for (var y = 1; y < reachableItems.length; y = y + 2){
+						if(reachableItems[y].indexOf(objectName) != -1){
+							locatedID = reachableItems[y - 1];
+							break;
+						}
+					}
+
+					if(locatedID == -1){
+						//Capitalize the first letter of whatever the fuck they were looking for
+						objectName = objectName.charAt(0).toUpperCase() + objectName.slice(1);
+						returnString = objectName + " isn't here!";
+					} else {
+						returnString = itemCollection[locatedID].description;
 					}
 				}
-
-				//TODO : update getListOfUsableItems get a way to isolate each item interactName in it's own array entry, but still be able to reach the ID.
-				//Rewrite to split interactName and put a new ID entry before each new entry to interactName? indexOf("item") will return index of array, just -1 that.
 			}
 			return returnString;
 		}
@@ -200,14 +275,14 @@
 			} else {
 				RoomDescription = roomObject.description.split(";")[0];
 				//Also show items
-				var objectsInRoom = roomObject.containedItems.split(";");
+				var objectsInRoom = roomObject.containedItems;
 				var objectString = "";
 				for (var i = 0; i < objectsInRoom.length; i++){
-					if (objectsInRoom[i].revealed){
-						if (objectString.length = 0){
-							objectString += objectsInRoom[i].name;
+					if (itemCollection[objectsInRoom[i]].revealed){
+						if (objectString.length == 0){
+							objectString += itemCollection[objectsInRoom[i]].name;
 						} else {
-							objectString += ", " + objectsInRoom[i].name;
+							objectString += ", " + itemCollection[objectsInRoom[i]].name;
 						}					
 					}
 				}
@@ -216,16 +291,16 @@
 					RoomDescription += "\n\nIn this room, you see " + objectString;
 				}
 
-				if(roomObject.exits = ""){
+				if(roomObject.exits == ""){
 					RoomDescription += "\n\nThis room has no exits. You should panic.";
 				} else {
-					var exitSplit = roomObject.exits.split(";");
+					var exitSplit = roomObject.exits;
 					RoomDescription += "\n\nYou see exits to the ";
-					for (var y = 0; y < existSplit.length; y++){
+					for (var y = 0; y < exitSplit.length; y++){
 						if(y != 0){
 							RoomDescription += ", ";
 						}
-						switch(existSplit[y]){
+						switch(exitSplit[y]){
 							case "N":
 								RoomDescription += "north";
 								break;
