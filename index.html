@@ -278,6 +278,13 @@
 						isHaunted = true;
 					}
 					document.title = "Location: " + roomCollection[currentRoomId].name;
+					if(roomCollection[currentRoomId].roomImage != ""){
+						$("#roomPic").css("display", "block");
+						$("#roomPic").attr("src", roomCollection[currentRoomId].roomImage);
+					} else{
+						$("#roomPic").css("display", "none");
+					}
+					
 					return handleExamine(['look']);
 				}
 			} else {
@@ -455,9 +462,13 @@
 									if(roomCollection[currentRoomId].isDark == true){
 										roomCollection[currentRoomId].isDark = false;
 										returnString = itemCollection[requestedItemID].onUse[2];
+										$("#roomPic").css("display", "block");
+										$("#roomPic").attr("src", roomCollection[currentRoomId].roomImage);
 										break;
 									} else {
 										roomCollection[currentRoomId].isDark = true;
+										$("#roomPic").css("display", "block");
+										$("#roomPic").attr("src", "img/roomd.jpg");
 										returnString = itemCollection[requestedItemID].onUse[3];
 										break;
 									}								
@@ -579,8 +590,8 @@
     		<textarea id="txtLog" disabled="true"></textarea>
     	</div>
     	<input id="txtCmd" type="text" name="txtCmd" /><input id="btnSubmit" type="submit" value="Submit" onclick="handleInput();" />   
-    	<div id="pictureFrame">
-    		<img id="roomPic" src="no" />
+    	<div id="pictureFrame" style="text-align:center;">
+    		<img id="roomPic" src="img/roomd.jpg" width="400" height="300" style="margin: 0 auto;" />
     	</div>	
     </div>
     <div id="666" style="color: white;"></div>

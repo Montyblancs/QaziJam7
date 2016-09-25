@@ -13,6 +13,7 @@ var Room = {
 	containedItems: [],
 	isDark: false,
 	lockedExits: [],
+	roomImage: "",
 	haunted: false
 }
 
@@ -62,6 +63,7 @@ room1.description = "This is your office. It's about as drab and boring as you a
 room1.exits = ["n"];
 room1.connectedRooms = ["n", 1];
 room1.containedItems = [0, 1, 2, 3, 4];
+room1.roomImage = "img/room1.jpg";
 room1.isDark = true;
 
 roomCollection.push(room1);
@@ -129,6 +131,7 @@ room2.name = "the building's hallway";
 room2.description = "You're in the office building hallway. The front entrance is blocked off for the yearly zombie raid drill. It's just a drill, do not panic. There's a maintence door to the east, and your office is to the south.\n\nMost of the offices in this building are vacant, the few that are used are occupied by tenants that spend their entire day watching QaziTV, the only form of entertainment in this world.\n\nYou silently wonder if Qazi's nose is real.";
 room2.exits = ["s", "e"];
 room2.connectedRooms = ["s", 0, "e", 2];
+room2.roomImage = "img/room2.jpg";
 room2.containedItems = [5, 6];
 
 roomCollection.push(room2);
@@ -188,6 +191,7 @@ room4.name = "a completely normal hallway";
 room4.description = "You walk into a completely normal hallway. It's extremely plain. The only object of interest is a big sign next to the east door.";
 room4.exits = ["s", "e", "n"];
 room4.connectedRooms = ["s", 2, "e", 4, "n", 5];
+room4.roomImage = "img/room4.jpg";
 room4.containedItems = [8];
 
 roomCollection.push(room4);
@@ -218,6 +222,7 @@ room5.name = "a non-descript office"
 room5.description = "You enter an empty office, complete with depressing-looking cubicles. You're reminded of your previous job, where you worked in a white office with a white desk, a coat rack, and you're describing your current job. Crap.";
 room5.exits = ["s", "w"];
 room5.connectedRooms = ["s", 3, "w", 6];
+room5.roomImage = "img/room5.jpg";
 room5.lockedExits = ["w"];
 room5.containedItems = [9];
 
