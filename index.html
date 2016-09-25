@@ -148,6 +148,8 @@
 					case "use":
 					case "activate":
 					case "give":
+					case "flip":
+					case "put":
 						return handleItemUse(commandString, commandString[0]);
 						break;
 					case "open":
@@ -159,6 +161,7 @@
 						break;
 					case "look":
 					case "examine":
+					case "read":
 						return handleExamine(commandString);
 						break;		
 				}
@@ -239,7 +242,7 @@
 				if(i == startIndex){
 					objectName += commandString[i];
 				} else if(i > startIndex) {
-					if(commandString[i] == "on" || commandString[i] == "to"){
+					if(commandString[i] == "on" || commandString[i] == "to" || commandString[i] == "in"){
 						break;
 					} else {
 						objectName += " " + commandString[i];
@@ -403,11 +406,14 @@
 				returnString = "You can't use what you don't have!";
 			} else {
 				if(itemCollection[requestedItemID].verbs.indexOf(verb) != -1){
-					if(commandString.indexOf("on") != -1 || commandString.indexOf("to") != -1 ){
+					if(commandString.indexOf("on") != -1 || commandString.indexOf("to") != -1 || commandString.indexOf("in") != -1){
 						//Item combination
 						var targetIndex = commandString.indexOf("on")
 						if(targetIndex == -1){
 							targetIndex = commandString.indexOf("to");
+						}
+						if(targetIndex == -1){
+							targetIndex = commandString.indexOf("in");
 						}
 
 						var secondItemName = [];
@@ -464,6 +470,7 @@
 										returnString = itemCollection[requestedItemID].onUse[2];
 										$("#roomPic").css("display", "block");
 										$("#roomPic").attr("src", roomCollection[currentRoomId].roomImage);
+										returnString += "\n\n" + examineCurrentRoom();
 										break;
 									} else {
 										roomCollection[currentRoomId].isDark = true;

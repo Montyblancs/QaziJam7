@@ -44,7 +44,7 @@ var Item = {
 
 var itemCollection = [];
 
-var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "talk to", "speak", "speak to", "pick up", "take", "use", "open", "activate", "i", "inventory", "look", "examine", "give"];
+var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "talk to", "speak", "speak to", "pick up", "take", "use", "flip", "open", "activate", "i", "inventory", "look", "examine", "read", "give", "put"];
 var notAcceptedResponses = ["...What?", "I don't know what you mean by that.", "That's not something I'm letting you do, no.", "You might want to type in HELP, there, buddy.", "I was preprogrammed with acceptable actions, and that's definately not one of them.", "Are you drunk again?", "I'm not doing that.", "I don't even.", "Clever, but not something I know how to work with.", "I swear to god, I don't understand what you just typed in, but if it's something insulting, I'm gonna subscribe your cell phone number to Cat Facts.", "I don't understand that action.", "I don't understand.", "I don't get it.", "That's not an action that I understand.", "I don't know how to do that.", "Huh?", "Whatever that was, it's certainly not the answer to this problem.", "That's not an action I've been programmed to understand.", "Come again?", "You'll have to rephrase that one.", "Not understood, type in HELP to see the actions you can use.", "You're just trying to see all of these messages, aren't you?", "No.", "I'm not gonna do that.", "You can't make me do that!", "That's not happening.", "[NEGATIVE RESPONSE]", "I think there's a problem between the monitor and the chair, here.", "u wot m8?", "No entiendo, señor", "Qué?", "うん、参照してください？私はあなたがあまりにも理解していない言語で入力することができます.\n[Yeah, see? I can type in languages you don't understand too.]", "I don't get it.", "What was that?", "Oh boy, I'm gonna give you a lot of snark for whatever the heck you just said.", "Was that a Watto reference?", "I don't get it.", "I don't understand that.", "I don't understand that.", "I don't understand that." ,"I don't understand that." ,"I don't understand that.","I don't understand that.", "I don't understand that.", "I don't understand that."]
 
 var currentRoomId = 0;
@@ -71,8 +71,8 @@ roomCollection.push(room1);
 var lightSwitch1 = Object.create(Item);
 lightSwitch1.id = 0;
 lightSwitch1.name = "a light switch";
-lightSwitch1.interactNames = ["switch", "light switch"]
-lightSwitch1.verbs = ["look", "examine", "activate","use"];
+lightSwitch1.interactNames = ["light", "switch", "light switch"]
+lightSwitch1.verbs = ["look", "examine", "activate", "use", "flip"];
 lightSwitch1.description = "An ordinary light switch. The lost civilization of New York City once used these primitive devices to signal to their lightbulb overlords that they wish to be able to see again.";
 lightSwitch1.onUse = ["tgl", "isDark", "You turn on the light, casting an immediate white glow in the room.", "You turn off the light, and now you're sitting in darkness again. Good job."];
 
@@ -82,7 +82,7 @@ var gun2 = Object.create(Item);
 gun2.id = 1;
 gun2.name = "a gun";
 gun2.interactNames = ["gun", "a gun", "the gun"];
-gun2.verbs = ["look", "examine", "shoot", "use", "give"];
+gun2.verbs = ["look", "examine", "shoot", "use", "give", "put"];
 gun2.takeable = true;
 gun2.inContainer = true;
 gun2.revealed = false;
@@ -152,7 +152,7 @@ var sign7 = Object.create(Item);
 sign7.id = 6;
 sign7.name = "a small sign";
 sign7.interactNames = ["sign", "small sign"];
-sign7.verbs = ["look", "examine"];
+sign7.verbs = ["look", "examine", "read"];
 sign7.description = "A piece of paper has been stapled to the wall next to one of the offices. It reads:\n\n'ATTN: Everyone\nRemember that QaziTV broadcasts mon/wed/fri at 2pm EST. Expect delays. Constantly.\nQaziTV is committed to high quality broadcasts, please use the remainder of this sheet to note when mistakes occured during broadcast so we can better improve our show!'\n\nThe rest of the paper is filled to the brim with dates and time codes. There's so many that people had to start writing on the wall around the paper.";
 
 itemCollection.push(sign7);
@@ -174,7 +174,7 @@ roomCollection.push(room3);
 var door8 = Object.create(Item);
 door8.id = 7;
 door8.name = "a strange-looking door";
-door8.interactNames = ["door", "strange door", "strange-looking door"];
+door8.interactNames = ["door", "strange door", "strange-looking door", "slot"];
 door8.verbs = ["look", "examine", "on"];
 door8.description = "You take a closer look at the door, and you notice that it's completely covered in what appear to be complicated locking mechanisms. There's a strange gun-shaped slot in the middle of it.";
 door8.combineID = 1;
@@ -200,7 +200,7 @@ var sign9 = Object.create(Item);
 sign9.id = 8;
 sign9.name = "a large sign";
 sign9.interactNames = ["sign", "large sign"];
-sign9.verbs = ["look", "examine"];
+sign9.verbs = ["look", "examine", "read"];
 sign9.description = "The sign next to the east door reads, in large, bold font :\n\n'Don't come in here.'";
 itemCollection.push(sign9);
 //End completely normal hallway
