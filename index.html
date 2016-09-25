@@ -198,7 +198,21 @@
 		}
 
 		function handleMovement(direction){
+			var returnText = "";
 
+			if(roomCollection[currentRoomId].exits.indexOf(direction) != -1){
+				for(var i = 0; i < roomCollection[currentRoomId].connectedRooms.length; i = i + 2){
+					if(roomCollection[currentRoomId].connectedRooms.indexOf(direction) != -1){
+						currentRoomId = roomCollection[currentRoomId].connectedRooms[i + 1];
+						break;
+					}
+				}
+			} else {
+				returnText = "You smack into a wall. Yet another bunch of brain cells you're never getting back."
+				return returnText;
+			}
+
+			return handleExamine(['look']);
 		}
 
 		function handleTakeObject(commandString){
@@ -301,7 +315,7 @@
 							}
 							break;
 						case "txt":
-							returnString = itemCollection[requestItemID].onUse[1];
+							returnString = itemCollection[requestedItemID].onUse[1];
 							break;
 					}
 				}
@@ -376,16 +390,16 @@
 							RoomDescription += ", ";
 						}
 						switch(exitSplit[y]){
-							case "N":
+							case "n":
 								RoomDescription += "north";
 								break;
-							case "S":
+							case "s":
 								RoomDescription += "south";
 								break;
-							case "E":
+							case "e":
 								RoomDescription += "east";
 								break;
-							case "W":
+							case "w":
 								RoomDEscription += "west";
 								break;
 						}						

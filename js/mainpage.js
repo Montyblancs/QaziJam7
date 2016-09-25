@@ -9,6 +9,7 @@ var Room = {
 	name: "unset",
 	description: "I wasn't set!",
 	exits: [],
+	connectedRooms: [],
 	containedItems: [],
 	isDark: false
 }
@@ -51,7 +52,8 @@ var room1 = Object.create(Room);
 room1.id = 0;
 room1.name = "your office";
 room1.description = "This is your office. It's about as drab and boring as you are. As much as you love taking in the same exact sight you've been seeing for the past 30 years of your life, it's probably best to move along.;This is your office. You're pretty sure, anyway, because it's pitch black in here. You should probably turn on that LIGHT SWITCH.";
-room1.exits = ["N"];
+room1.exits = ["n"];
+room1.connectedRooms = ["n", 1];
 room1.containedItems = [0, 1, 2, 3, 4];
 room1.isDark = true;
 
@@ -110,5 +112,36 @@ desk5.containedItems = [1];
 desk5.openText = "You open your desk drawer, revealing some pointless trinkets that you're not even going to bother mentally describing to yourself. Oh, yes, also a gun.";
 
 itemCollection.push(desk5);
+
+var room2 = Object.create(Room);
+room2.id = 1;
+room2.name = "the building's hallway";
+room2.description = "You're in the office building hallway. The front entrance is blocked off for the yearly zombie raid drill. It's just a drill, do not panic. There's a maintence door to the east, and your office is to the south.\n\nMost of the offices in this building are vacant, the few that are used are occupied by tenants that spend their entire day watching QaziTV, the only form of entertainment in this world.\n\nYou silently wonder if Qazi's nose is real.";
+room2.exits = ["s", "e"];
+room2.connectedRooms = ["s", 0, "e", 2];
+room2.containedItems = [5, 6];
+
+roomCollection.push(room2);
+
+var tape6 = Object.create(Item);
+tape6.id = 5;
+tape6.name = "a roll of duct tape";
+tape6.interactNames = ["tape", "duct tape", "roll of duct tape"];
+tape6.verbs = ["look", "examine", "use"];
+tape6.takeable = true;
+tape6.description = "A partially used roll of duct tape. This tape is said to fix all phyiscal problems, but sadly, doesn't fix any of the mental ones.";
+tape6.takeText = "You take the duct tape. Your affinity for taking objects that probably don't belong to you has increased by one."
+tape6.onUse = ["txt", "You don't really have that much duct tape to be using all willy-nilly like that."];
+
+itemCollection.push(tape6);
+
+var sign7 = Object.create(Item);
+sign7.id = 6;
+sign7.name = "a small sign";
+sign7.interactNames = ["sign", "small sign"];
+sign7.verbs = ["look", "examine"];
+sign7.description = "A piece of paper has been stapled to the wall next to one of the offices. It reads:\n\n'ATTN: Everyone\nRemember that QaziTV broadcasts mon/wed/fri at 2pm EST. Expect delays. Constantly.\nQaziTV is committed to high quality broadcasts, please use the remainder of this sheet to note when mistakes occured during broadcast so we can better improve our show!'\n\nThe rest of the paper is filled to the brim with dates and time codes. There's so many that people had to start writing on the wall around the paper.";
+
+itemCollection.push(sign7);
 
 //End Starting Room
