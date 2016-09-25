@@ -61,6 +61,7 @@
 			if(countdownTimer <= 0){
 				//ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE
 				window.open('','_self').close();
+				window.location.replace("index.html");
 			}
 			purgeString = purgeString + "P̢U̶̕R̴̡҉͜Ģ̨̀̕E̷̸͠͏ ̷́͟͠ ";
 			document.getElementById("floating").innerHTML = purgeString;
@@ -138,15 +139,15 @@
 						return handleMovement("w");
 						break;
 					case "talk":
-					case "chat":
 					case "speak":
-						//TODO: Diolauge system
+						return handleTalk(commandString);
 						break;
 					case "take":
 						return handleTakeObject(commandString);
 						break;
 					case "use":
 					case "activate":
+					case "give":
 						return handleItemUse(commandString, commandString[0]);
 						break;
 					case "open":
@@ -169,6 +170,10 @@
 						break;
 					case "turn on":
 						return handleItemUse(commandString, commandString[0] + " " + commandString[1]);
+						break;
+					case "talk to":
+					case "speak to":
+					return handleTalk(commandString);
 						break;
 				}
 			}
@@ -234,7 +239,7 @@
 				if(i == startIndex){
 					objectName += commandString[i];
 				} else if(i > startIndex) {
-					if(commandString[i] == "on"){
+					if(commandString[i] == "on" || commandString[i] == "to"){
 						break;
 					} else {
 						objectName += " " + commandString[i];
@@ -269,9 +274,10 @@
 				} else if(roomCollection[currentRoomId].connectedRooms.indexOf(direction) != -1){
 					currentRoomId = roomCollection[currentRoomId].connectedRooms[roomCollection[currentRoomId].connectedRooms.indexOf(direction) + 1];
 					if(roomCollection[currentRoomId].haunted){
-						//ooh boy, you just fucked up.
+						//**FUN**
 						isHaunted = true;
 					}
+					document.title = "Location: " + roomCollection[currentRoomId].name;
 					return handleExamine(['look']);
 				}
 			} else {
@@ -279,6 +285,31 @@
 				return returnText;
 			}
 			
+		}
+
+		function handleTalk(commandString){
+			returnString = ""
+
+			var reachableItems = getListOfUsableItems();
+			var requestedItemID = searchForRequestedItem(commandString, reachableItems);
+
+			var objectName = getObjectName(commandString, 1);
+
+			if(requestedItemID != -1){
+				if(itemCollection[requestedItemID].verbs.indexOf(commandString[0]) != -1){
+					returnString = itemCollection[requestedItemID].talkText;
+					if(requestedItemID == 10){
+						//Game over, go home.
+						$('#txtCmd').hide();
+						$('#btnSubmit').hide();
+					}
+				} else {
+					returnString = "You talk to an inanimate object. It's a riviting conversation.";
+				}
+			} else {
+				returnString = "You talk to fictional objects. Just another Saturday night for you!"
+			}
+			return returnString;
 		}
 
 		function handleTakeObject(commandString){
@@ -365,10 +396,15 @@
 				returnString = "You can't use what you don't have!";
 			} else {
 				if(itemCollection[requestedItemID].verbs.indexOf(verb) != -1){
-					if(commandString.indexOf("on") != -1){
+					if(commandString.indexOf("on") != -1 || commandString.indexOf("to") != -1 ){
 						//Item combination
+						var targetIndex = commandString.indexOf("on")
+						if(targetIndex == -1){
+							targetIndex = commandString.indexOf("to");
+						}
+
 						var secondItemName = [];
-						for(i=commandString.indexOf("on");i<commandString.length;i++){
+						for(i=targetIndex;i<commandString.length;i++){
 							secondItemName.push(commandString[i]);
 						}
 						var recipientID = searchForRequestedItem(secondItemName, reachableItems);
@@ -378,16 +414,35 @@
 								switch(itemCollection[recipientID].combineResult[0]){
 									case "unlk":
 										roomCollection[currentRoomId].lockedExits = [];
-										var removeIndex = roomCollection[currentRoomId].containedItems.indexOf(recipientID)
-										roomCollection[currentRoomId].containedItems.splice(removeIndex, 1);
+										if(itemCollection[recipientID].id == 9){
+											itemCollection[recipientID].description = "You see a vibrating duct tape cocoon. You feel uncomfortable.";
+											itemCollection[recipientID].combineID = -1;
+											var removeIndex = inventoryItems.indexOf(requestedItemID);
+											inventoryItems.splice(removeIndex, 1);
+										} else {
+											var removeIndex = roomCollection[currentRoomId].containedItems.indexOf(recipientID)
+											roomCollection[currentRoomId].containedItems.splice(removeIndex, 1);
+										}					
 								}
 								return returnString;
 							} else {
-								returnString = "You can't combine those items.";
-								return returnString;
+								if(itemCollection[recipientID].id == 9 && itemCollection[recipientID].combineID == -1){
+									returnString = "The tape cocoon vibrates profusely when you poke it with your gun. You don't feel like this is going to solve anything.";
+									return returnString;
+								} else if(itemCollection[recipientID].id == 9){
+									returnString = "'I DON'T WANT THAT!'\n\nThe man slaps it out of your hands. You couldn't possibly be more disappointed in him.";
+									return returnString;
+								} else {
+									returnString = "You can't combine those items.";
+									return returnString;
+								}						
 							}
 
 						} else {
+							if(itemCollection[requestedItemID].id == 1 && secondItemName[1] == "self"){
+								returnString = "Jesus, man. That's pretty dark."
+								return returnString;
+							}
 							returnString = "I have no idea what you're trying to use that on.";
 							return returnString;
 						}
@@ -519,14 +574,14 @@
 
   	<div id="floating" style="position:absolute; color: white; font-size:4em; left: 0; top: 0;"></div>
 
-    <div id="container" style="background: red;">
-    	<div id="pictureFrame" style="background: green;">
-    		Content
-    	</div>
-    	<div id="logContainer" style="background: blue;">
+    <div id="container">
+    	<div id="logContainer">
     		<textarea id="txtLog" disabled="true"></textarea>
     	</div>
-    	<input id="txtCmd" type="text" name="txtCmd" /><input id="btnSubmit" type="submit" value="Submit" onclick="handleInput();" />   	
+    	<input id="txtCmd" type="text" name="txtCmd" /><input id="btnSubmit" type="submit" value="Submit" onclick="handleInput();" />   
+    	<div id="pictureFrame">
+    		<img id="roomPic" src="no" />
+    	</div>	
     </div>
     <div id="666" style="color: white;"></div>
   </body>

@@ -37,12 +37,13 @@ var Item = {
 	diolauge: "none",
 	combineID: -1,
 	combineText: "",
-	combineResult: []
+	combineResult: [],
+	talkText: ""
 }
 
 var itemCollection = [];
 
-var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "chat", "speak", "pick up", "take", "use", "open", "activate", "i", "inventory", "look", "examine", "hit", "shoot"];
+var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "talk to", "speak", "speak to", "pick up", "take", "use", "open", "activate", "i", "inventory", "look", "examine", "give"];
 var notAcceptedResponses = ["...What?", "I don't know what you mean by that.", "That's not something I'm letting you do, no.", "You might want to type in HELP, there, buddy.", "I was preprogrammed with acceptable actions, and that's definately not one of them.", "Are you drunk again?", "I'm not doing that.", "I don't even.", "Clever, but not something I know how to work with.", "I swear to god, I don't understand what you just typed in, but if it's something insulting, I'm gonna subscribe your cell phone number to Cat Facts.", "I don't understand that action.", "I don't understand.", "I don't get it.", "That's not an action that I understand.", "I don't know how to do that.", "Huh?", "Whatever that was, it's certainly not the answer to this problem.", "That's not an action I've been programmed to understand.", "Come again?", "You'll have to rephrase that one.", "Not understood, type in HELP to see the actions you can use.", "You're just trying to see all of these messages, aren't you?", "No.", "I'm not gonna do that.", "You can't make me do that!", "That's not happening.", "[NEGATIVE RESPONSE]", "I think there's a problem between the monitor and the chair, here.", "u wot m8?", "No entiendo, señor", "Qué?", "うん、参照してください？私はあなたがあまりにも理解していない言語で入力することができます.\n[Yeah, see? I can type in languages you don't understand too.]", "I don't get it.", "What was that?", "Oh boy, I'm gonna give you a lot of snark for whatever the heck you just said.", "Was that a Watto reference?", "I don't get it.", "I don't understand that.", "I don't understand that.", "I don't understand that." ,"I don't understand that." ,"I don't understand that.","I don't understand that.", "I don't understand that.", "I don't understand that."]
 
 var currentRoomId = 0;
@@ -79,7 +80,7 @@ var gun2 = Object.create(Item);
 gun2.id = 1;
 gun2.name = "a gun";
 gun2.interactNames = ["gun", "a gun", "the gun"];
-gun2.verbs = ["look", "examine", "shoot", "use"];
+gun2.verbs = ["look", "examine", "shoot", "use", "give"];
 gun2.takeable = true;
 gun2.inContainer = true;
 gun2.revealed = false;
@@ -136,7 +137,7 @@ var tape6 = Object.create(Item);
 tape6.id = 5;
 tape6.name = "a roll of duct tape";
 tape6.interactNames = ["tape", "duct tape", "roll of duct tape"];
-tape6.verbs = ["look", "examine", "use"];
+tape6.verbs = ["look", "examine", "use", "give"];
 tape6.takeable = true;
 tape6.description = "A partially used roll of duct tape. This tape is said to fix all phyiscal problems, but sadly, doesn't fix any of the mental ones.";
 tape6.takeText = "You take the duct tape. Your affinity for taking objects that probably don't belong to you has increased by one."
@@ -192,11 +193,11 @@ room4.containedItems = [8];
 roomCollection.push(room4);
 
 var sign9 = Object.create(Item);
-sign9.id = 7;
+sign9.id = 8;
 sign9.name = "a large sign";
 sign9.interactNames = ["sign", "large sign"];
 sign9.verbs = ["look", "examine"];
-sign9.description = "The sign next to the east door reads, in large, red font:\n\n'Don't come in here.'";
+sign9.description = "The sign next to the east door reads, in large, bold font :\n\n'Don't come in here.'";
 itemCollection.push(sign9);
 //End completely normal hallway
 
@@ -209,3 +210,50 @@ room666.haunted = true;
 
 roomCollection.push(room666);
 //RIP in piss
+
+//Office Room
+var room5 = Object.create(Room);
+room5.id = 5;
+room5.name = "a non-descript office"
+room5.description = "You enter an empty office, complete with depressing-looking cubicles. You're reminded of your previous job, where you worked in a white office with a white desk, a coat rack, and you're describing your current job. Crap.";
+room5.exits = ["s", "w"];
+room5.connectedRooms = ["s", 3, "w", 6];
+room5.lockedExits = ["w"];
+room5.containedItems = [9];
+
+roomCollection.push(room5);
+
+var man10 = Object.create(Item);
+man10.id = 9;
+man10.name = "a vibrating old man";
+man10.interactNames = ["man", "old man", "vibrating man"];
+man10.verbs = ["look", "examine", "on", "to", "talk", "talk to", "speak", "speak to"];
+man10.description = "You see a strange old man sitting in a cubicle. He vibrates intensely, for no real discernible reason.\n\n'Gimme a thing!!', he yells at you.";
+man10.combineID = 5;
+man10.combineText = "You give the old man your tape. He jumps up and rips it out of your hands, immediately wrapping it around himself. You watch in an odd mixure of confusion and amazement as the old man turns himself into a duct-tape cocoon. After a couple of minutes, the only thing left of him is one wierdly vibrating arm.\n\nThe old man falls over, and the impact causes the west door to open. He's still vibrating, you don't think that's ever going to stop.";
+man10.combineResult = ["unlk", "w"];
+man10.talkText = "'SHUT UP!!'\n\nHe bangs on his desk a few times."
+
+itemCollection.push(man10);
+//End office room
+
+//Qaziroom
+var room6 = Object.create(Room);
+room6.id = 6;
+room6.name = "the Qaziroom"
+room6.description = "You enter the corner office. Sitting behind a large white desk is a boring looking ma- no wait, that's Qazi. He's sitting completely motionless, staring straight through you. He doesn't even seem to acknowledge your presense when you enter. Is this what he does when he's not broadcasting himself over the internet?";
+room6.exits = ["e"];
+room6.connectedRooms = ["e", 5];
+room6.containedItems = [10];
+
+roomCollection.push(room6);
+
+var man11 = Object.create(Item);
+man11.id = 10;
+man11.name = "Qazi";
+man11.interactNames = ["qazi", "man", "streamer"];
+man11.verbs = ["look", "examine", "talk", "talk to", "speak", "speak to"];
+man11.description = "It's Qazi. If you want a more accurate description, look at the bottom right of the stream.";
+man11.talkText = "Before you can manage to utter a word, Qazi speaks.\n\n'My son. I am the Prism.'\n\nYour heart skips a beat. You pause for a brief moment before finding your voice again.\n\n'The colors...\nCan you give the world color?'\n\nQazi looks at you and lifts his arms in the air. He begins to ascend towards the ceiling.\n\n'My child. I have already given this world color. You are colorblind.'\n\nQazi phases through the ceiling as you faintly hear a metal version of a Chrono Trigger song, followed by the muffled noises of Qazi telling someone how they have access to a subscriber only Discord.\n\n**THANKS FOR PLAYING?**";
+
+itemCollection.push(man11);
