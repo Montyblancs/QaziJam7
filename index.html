@@ -16,7 +16,67 @@
 		    });
 		});
 
+		var hauntDelay = 2000;
+		var countdownTimer = 100;
+		var activated1 = false;
+		function haunt(){
+			var currentLog = $('#txtLog').val();
+			if(hauntDelay > 100){
+				hauntDelay = hauntDelay - 100;
+			}
+			if(hauntDelay > 1500){
+				$('#txtLog').val(currentLog + "\nYou shouldn't have come in here.");
+			}else if(hauntDelay > 1000){
+				$('#txtCmd').hide();
+				$('#btnSubmit').hide();
+				$('#txtLog').val(currentLog + "\nY͟o̷u ̴sh̨o̶u҉ldn't̨ ḩa͡vȩ ͞com̀e iņ ̴here.");
+			}else if(hauntDelay > 500){
+				$('#txtLog').val(currentLog + "\nÝ̸̴̕͠Ò̴̶͞͠U̶͜҉̢͟ ̧̀S҉̨͟H͏͡Ǫ͟U̸͢҉̀L̶̴̡͘͜D̴̴̛Ǹ̡'̸T̶̢̧͢ ̷̕H̢̡͢A͏͠V͜͡҉E̵͝͡͠ ̴̵͡C̶̨͢͡O̡̡M͏̡̡̀͝E҉̴ ͡͏̵̷́I̡͏N̸҉̨҉͟ ̢̀H҉͝E̕҉̡R͞҉̀͘Ę͏");
+			}else{
+				$('#txtLog').val(currentLog + "\nGE͜T̕ ̸Ó͡UT ̢G̛͜͡E҉̨̛T̷͟ ̵O̢͝U҉͟T͏́҉ ҉G͝E̷̢T ͢Ǫ̵̢U̴T̨̨͡ G͜͜E̷̸͝T́͞ O̧UT̷̵ G҉Ȩ̛T̶͜ OU͢T ̨G̶͏ET̡̨ ̛͜O̧U͟T ̵͜͟Ģ͝ÈT͘ ̵̧̕O͟҉U͞T̛͘̕ GȨ̷T҉ ͢ÒU͘͘T̶͠ G͟͜ET̨͠ ̸̡͢O̢̕UT̨ ̴͘͜G̴҉̵E͡T̢͝ ̡O̵Ú̸T ͞͝G̸͢͠E͘T ̷͡OU̧T ̷G̢̀E͞T O̷̧̡Ù͜T͠ ͞G҉̡E͜T ̀͟͠O҉U͘͜͡T ̡G͠͝E҉Ţ O͢Ù͟T̷̛ ̵̷GE͟͞T͘͡ ҉O̶U͘̕Ţ͏ ͢͢GE͜T ̸OU͝͡T̨͘͜ ͘͠G̡E͜T̵͡҉ O̸UT ̸͘G̴͡͝E̛̛T͏̷̧ ̵͟͠Ó̷U͏҉̢T̨͢ ͜G̸Ę̡͠T ͠OU͡T͞ GÈ͝T̀͢ ̸͢O̶̧͢UT́͏ ̛̛GE̡͜͜T̨͜͡ ̕͏O̸U҉T͜ ̴G̀̀ĘT̶̀ ̶O̸̢͟UT͘҉ ̀҉̶G͏̴̀ET ͢O͠U͘T̛͜ ́G̨͘͝ÉT͏ Ờ̕UT̨ G͢͝ET Ǫ̧̛U̡T͏͟ ̵̶͏GÉ̴T̶͜ ҉O͢͏U͜T G̵͘ET̵̡ ̛͘OU҉҉̸T G̛͝҉ET͘ ̛͢ÓƯT҉ G̴͘E͢T͟ ̕O̡͢͡U̢T̸ G͟E͟T ̧҉O̕͜UT̴̛ ̀GÈT̷ ͡͞O̕͠U͟͠T̴́͞ ̡GĘ́T҉ O͜Ú̢T GE̡͘T͜ ͢͠OU͏̸T̛ ͜͢G͘͏͡É̷T̶̛ O͠U̸T ̸͘G̵̨̨E̸T ͠OU͡͏T̛̛́ ͏͜GÉ̵T͝ ̵͡͏O̷͟͡UT ̴̀G̵ET̛҉ ̛OÚŢ̀ ͟G̨҉҉E̵͞T̴̕҉ ̴̀͜O҉Ù̶͢T ̡GȨT͜͡ ͜͠O̷͘UT́̀ ̸̡͡G̕ET̨ O̷̧UT͜͢ ͏Ǵ̵ĘT̴ ҉Ó̶͢UT̨ Ǵ̛҉E͢T́ ͏̵Ǫ͢U̢̕T̸̀͞ G̶E̷T̀͡ ͡O̸̴̸U̕T̴ ̶̕͢Ģ̶̵ET ͡O͡U͏͢T̵̀ ͟G̢͠E͠͠T̡ Ó͢͞UT̨̛͘ ̴̛Ģ̕͞E͜͡T͘͏̷ ̀͞OÙ͟T͏͠ ͞G̢E҉T ͞O̧̕U̧͢҉T ̧͢G̸̛E̸̴͞T̨ ͏̀ǪU̸T̀ ͜G͟É̸T̨ ͏O̷͠UT̢̀");			
+				if(!activated1){
+					activated1 = true;
+					setTimeout(haunt2, hauntDelay);
+				}
+			}
+			$('#txtLog').scrollTop($('#txtLog')[0].scrollHeight);
+			setTimeout(haunt, hauntDelay);
+		}
+		 var itIsDone = false;
+		function haunt2(){
+			var currentText = $("#666").text();
+			$("#666").text(currentText + "N҉O ̀́̕Ç͢O̸͢Ǹ̵T̢͞R̵̨O̡L̸ ");
+
+			countdownTimer--;
+			if(countdownTimer < 50 && !itIsDone){
+				itIsDone = true;
+				setTimeout(haunt3, hauntDelay);
+			}
+			setTimeout(haunt2, hauntDelay);
+		}
+
+		var purgeString = "";
+
+		function haunt3(){
+			if(countdownTimer <= 0){
+				//ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE ESCAPE
+				window.open('','_self').close();
+			}
+			purgeString = purgeString + "P̢U̶̕R̴̡҉͜Ģ̨̀̕E̷̸͠͏ ̷́͟͠ ";
+			document.getElementById("floating").innerHTML = purgeString;
+			setTimeout(haunt3, hauntDelay);
+		}
+
 		function handleInput(){
+			if(isHaunted){
+				$("#txtCmd").val('');
+				$('#txtCmd').prop("disabled", true);
+				$('#btnSubmit').prop("disabled", true);
+				$('#txtLog').val("You shouldn't have come in here.");
+				setTimeout(haunt, 5000);
+				return;
+			}
+
 			var userInput = $("#txtCmd").val();
 			userInput = userInput.trim();
 			if(userInput.length <= 0){
@@ -208,6 +268,10 @@
 					return "The door is locked, you can't get through this way.";
 				} else if(roomCollection[currentRoomId].connectedRooms.indexOf(direction) != -1){
 					currentRoomId = roomCollection[currentRoomId].connectedRooms[roomCollection[currentRoomId].connectedRooms.indexOf(direction) + 1];
+					if(roomCollection[currentRoomId].haunted){
+						//ooh boy, you just fucked up.
+						isHaunted = true;
+					}
 					return handleExamine(['look']);
 				}
 			} else {
@@ -453,6 +517,8 @@
   		</div>
   	</div>
 
+  	<div id="floating" style="position:absolute; color: white; font-size:4em; left: 0; top: 0;"></div>
+
     <div id="container" style="background: red;">
     	<div id="pictureFrame" style="background: green;">
     		Content
@@ -460,7 +526,8 @@
     	<div id="logContainer" style="background: blue;">
     		<textarea id="txtLog" disabled="true"></textarea>
     	</div>
-    	<input id="txtCmd" type="text" name="txtCmd" /><input id="btnSubmit" type="submit" value="Submit" onclick="handleInput();" />
+    	<input id="txtCmd" type="text" name="txtCmd" /><input id="btnSubmit" type="submit" value="Submit" onclick="handleInput();" />   	
     </div>
+    <div id="666" style="color: white;"></div>
   </body>
 </html>

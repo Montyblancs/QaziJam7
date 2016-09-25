@@ -12,7 +12,8 @@ var Room = {
 	connectedRooms: [],
 	containedItems: [],
 	isDark: false,
-	lockedExits: []
+	lockedExits: [],
+	haunted: false
 }
 
 var roomCollection = [];
@@ -46,6 +47,7 @@ var notAcceptedResponses = ["...What?", "I don't know what you mean by that.", "
 
 var currentRoomId = 0;
 var inventoryItems = [];
+var isHaunted = false;
 
 //+++++++++++++
 //ROOM + ITEM DECLARATIONS
@@ -176,8 +178,34 @@ door8.combineText = "You insert the gun into the gun-shaped hole. What a suprise
 door8.combineResult = ["unlk", "n"];
 
 itemCollection.push(door8);
-
 //End maintence room
 
+//Completely normal hallway
+var room4 = Object.create(Room);
+room4.id = 3;
+room4.name = "a completely normal hallway";
+room4.description = "You walk into a completely normal hallway. It's extremely plain. The only object of interest is a big sign next to the east door.";
+room4.exits = ["s", "e", "n"];
+room4.connectedRooms = ["s", 2, "e", 4, "n", 5];
+room4.containedItems = [8];
 
+roomCollection.push(room4);
 
+var sign9 = Object.create(Item);
+sign9.id = 7;
+sign9.name = "a large sign";
+sign9.interactNames = ["sign", "large sign"];
+sign9.verbs = ["look", "examine"];
+sign9.description = "The sign next to the east door reads, in large, red font:\n\n'Don't come in here.'";
+itemCollection.push(sign9);
+//End completely normal hallway
+
+//Dead end, fucko.
+var room666 =  Object.create(Room);
+room666.id = 4;
+room666.name = "You shouldn't have come in here."
+room666.description = "You shouldn't have come in here."
+room666.haunted = true;
+
+roomCollection.push(room666);
+//RIP in piss
