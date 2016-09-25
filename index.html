@@ -135,21 +135,12 @@
 				reachableItems.push(inventoryItems[y]);
 				reachableItems.push(itemCollection[inventoryItems[y]].interactNames);
 			}
-
 			return reachableItems;
 		}
 
 		function searchForRequestedItem(commandString, itemList){
 			var foundItemID = -1;
-			var objectName = ""
-			for (var i = 0; i < commandString.length; i++){
-				if(i == 1){
-					objectName += commandString[i];
-				} else if(i > 1) {
-					objectName += " " + commandString[i];
-				}
-			}
-			
+			var objectName = getObjectName(commandString, 1);
 			var locatedID = -1
 			//step 2 through array, search each interactNames array from reachableItems(itemList)
 			for (var y = 1; y < itemList.length; y = y + 2){
@@ -161,9 +152,32 @@
 
 			if(locatedID != -1){
 				foundItemID = locatedID;
+			} else {
+				objectName = getObjectName(commandString, 2);
+				for (var u = 1; u < itemList.length; u = u + 2){
+					if(itemList[u].indexOf(objectName) != -1){
+						locatedID = itemList[u - 1];
+						break;
+					}
+				}
+				if(locatedID != -1){
+					foundItemID = locatedID;
+				}
 			}
 
 			return foundItemID;
+		}
+
+		function getObjectName(commandString, startIndex){
+			var objectName = ""
+			for (var i = 0; i < commandString.length; i++){
+				if(i == startIndex){
+					objectName += commandString[i];
+				} else if(i > startIndex) {
+					objectName += " " + commandString[i];
+				}
+			}
+			return objectName;
 		}
 
 		function displayInventory(){
@@ -178,6 +192,7 @@
 					}				
 					returnText += itemCollection[inventoryItems[i]].name;
 				}
+				returnText += "."
 			}
 			return returnText;
 		}
@@ -187,12 +202,79 @@
 		}
 
 		function handleTakeObject(commandString){
+			returnString = ""
+			if(roomCollection[currentRoomId].isDark){
+				returnString = "You try to take the darkness. You fail.";
+				return returnString
+			}
 			var reachableItems = getListOfUsableItems();
+			var requestedItemID = searchForRequestedItem(commandString, reachableItems);
 
+			var objectName = getObjectName(commandString, 1);
+
+			if (requestedItemID == -1){
+				if (objectName == ""){
+					returnString = "You take nothing. You get nothing. Nothing has been added to your inventory."
+				} else {
+					returnString = "You make up a " + objectName + " in your head, just so you can take it. It doesn't work.";
+				}
+			
+			} else {
+				if(itemCollection[requestedItemID].takeable && !itemCollection[requestedItemID].inInventory && roomCollection[currentRoomId].containedItems.indexOf(requestedItemID) != -1){
+					returnString = itemCollection[requestedItemID].takeText;
+					//Remove item from room's inventory
+					var itemIndex = roomCollection[currentRoomId].containedItems.indexOf(requestedItemID);
+					roomCollection[currentRoomId].containedItems.splice(itemIndex, 1);
+					//Add to player's inventory
+					inventoryItems.push(requestedItemID);
+					itemCollection[requestedItemID].inInventory = true;
+				} else if(itemCollection[requestedItemID].inInventory) {
+					returnString = "You already have that!";
+				} else if(roomCollection[currentRoomId].containedItems.indexOf(requestedItemID) == -1) {
+					returnString = "You make up a '" + objectName + "' in your head, just so you can take it. It doesn't work.";
+				} else if(!itemCollection[requestedItemID].takeable) {
+					returnString = "You really don't need that " + objectName + ", really.";
+				}
+			}
+
+			return returnString;
 		}
 
 		function handleItemOpen(commandString){
+			var returnString = ""
+			if(roomCollection[currentRoomId].isDark){
+				returnString = "You fumble about in the dark, bumping into random objects. You eventually just end up screaming 'OPEN' at the top of your lungs while crying on the floor.";
+				return returnString
+			}
+			var reachableItems = getListOfUsableItems();
+			var requestedItemID = searchForRequestedItem(commandString, reachableItems);
 			
+			var objectName = getObjectName(commandString, 1);
+
+			if (requestedItemID == -1){
+				if (objectName == ""){
+					returnString = "You scream 'OPEN' as loud as you can. Nothing opens."
+				} else {
+					returnString = "Your hands grasp at the air, as you try to open nothing. You mutter '" + objectName + "' under your breath repeatedly.";
+				}
+			
+			} else {
+				if(itemCollection[requestedItemID].verbs.indexOf("open") != -1 && itemCollection[requestedItemID].opened == false){
+					returnString = itemCollection[requestedItemID].openText;
+					itemCollection[requestedItemID].name = itemCollection[requestedItemID].name + ", which is open";
+					itemCollection[requestedItemID].opened = true;
+					for(var i = 0; i < itemCollection[requestedItemID].containedItems.length; i++) {
+						var targetID = itemCollection[requestedItemID].containedItems[i]
+						itemCollection[targetID].revealed = true;
+					}
+				} else if(itemCollection[requestedItemID].verbs.indexOf("open") != -1 && itemCollection[requestedItemID].opened == true) {
+					returnString = "You decide to leave that open, to remind yourself that you've already looked there.\n\nYou're also incredibly lazy.";
+				} else {
+					returnString = "You try desprately to pry open " + objectName + ", but all you manage to accomplish is hurting your hands.";
+				}
+			}
+
+			return returnString;
 		}
 
 		function handleItemUse(commandString, verb){
@@ -207,7 +289,7 @@
 						case "tgl":
 							switch(itemCollection[requestedItemID].onUse[1]){
 								case "isDark":
-									if(roomCollection[currentRoomId].isDark = true){
+									if(roomCollection[currentRoomId].isDark == true){
 										roomCollection[currentRoomId].isDark = false;
 										returnString = itemCollection[requestedItemID].onUse[2];
 										break;
@@ -236,15 +318,8 @@
 				if(roomCollection[currentRoomId].isDark){
 					returnString = "You can't examine something in this dark room, fool! Turn the lights on!"
 				} else {
-					var objectName = ""
 					var reachableItems = getListOfUsableItems();
-					for (var i = 0; i < commandString.length; i++){
-						if(i == 1){
-							objectName += commandString[i];
-						} else if(i > 1) {
-							objectName += " " + commandString[i];
-						}
-					}
+					var objectName = getObjectName(commandString, 1);
 					
 					var locatedID = -1
 					//step 2 through array, search each interactNames array from reachableItems

@@ -21,11 +21,13 @@ var Item = {
 	interactNames: [],
 	verbs: [],
 	takeable: false,
+	inInventory: false,
 	description: "I wasn't set!",
 	takeText: "",
 	openText: "",
+	opened: false,
 	combineable: false,
-	containedItems: "-1",
+	containedItems: [],
 	inContainer: false,
 	revealed: true,
 	onUse: [],
@@ -81,10 +83,11 @@ itemCollection.push(gun2);
 
 var door3 = Object.create(Item);
 door3.id = 2;
-door3.name = "the office front door";
+door3.name = "an office front door";
 door3.interactNames = ["door", "front door", "office front door"];
 door3.verbs = ["look", "examine", "open"];
 door3.description = "The front door of your office. The words on it read 'Blockhead - I do anything, give me work. Please.' You were hoping the desperate worker angle would bring in lots of customers, but so far all it's done is become on a meme on the trendiest social networking sites.";
+door3.openText = "You open the door. You didn't go through it, but you sure did open it."
 
 itemCollection.push(door3);
 
@@ -99,11 +102,11 @@ itemCollection.push(coatRack4);
 
 var desk5 = Object.create(Item);
 desk5.id = 4;
-desk5.name = "your white desk";
-desk5.interactNames = ["desk", "white desk"];
+desk5.name = "a white desk";
+desk5.interactNames = ["desk", "white desk", "drawer"];
 desk5.verbs = ["look", "examine", "open"];
 desk5.description = "Your blank white desk, complete with one singular blank white drawer. If this world wasn't entirely black and white, you'd have some difficulty keeping this clean, but thankfully this abstract concept hasn't even crossed your mind.";
-desk5.containedItems = "3";
+desk5.containedItems = [1];
 desk5.openText = "You open your desk drawer, revealing some pointless trinkets that you're not even going to bother mentally describing to yourself. Oh, yes, also a gun.";
 
 itemCollection.push(desk5);
