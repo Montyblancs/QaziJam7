@@ -11,7 +11,8 @@ var Room = {
 	exits: [],
 	connectedRooms: [],
 	containedItems: [],
-	isDark: false
+	isDark: false,
+	lockedExits: []
 }
 
 var roomCollection = [];
@@ -32,12 +33,15 @@ var Item = {
 	inContainer: false,
 	revealed: true,
 	onUse: [],
-	diolauge: "none"
+	diolauge: "none",
+	combineID: -1,
+	combineText: "",
+	combineResult: []
 }
 
 var itemCollection = [];
 
-var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "chat", "speak", "pick up", "take", "use", "open", "activate", "turn on", "i", "inventory", "look", "examine", "hit", "shoot"];
+var acceptedVerbs = ["help", "n", "north", "e", "east", "s", "south", "w", "west", "talk", "chat", "speak", "pick up", "take", "use", "open", "activate", "i", "inventory", "look", "examine", "hit", "shoot"];
 var notAcceptedResponses = ["...What?", "I don't know what you mean by that.", "That's not something I'm letting you do, no.", "You might want to type in HELP, there, buddy.", "I was preprogrammed with acceptable actions, and that's definately not one of them.", "Are you drunk again?", "I'm not doing that.", "I don't even.", "Clever, but not something I know how to work with.", "I swear to god, I don't understand what you just typed in, but if it's something insulting, I'm gonna subscribe your cell phone number to Cat Facts.", "I don't understand that action.", "I don't understand.", "I don't get it.", "That's not an action that I understand.", "I don't know how to do that.", "Huh?", "Whatever that was, it's certainly not the answer to this problem.", "That's not an action I've been programmed to understand.", "Come again?", "You'll have to rephrase that one.", "Not understood, type in HELP to see the actions you can use.", "You're just trying to see all of these messages, aren't you?", "No.", "I'm not gonna do that.", "You can't make me do that!", "That's not happening.", "[NEGATIVE RESPONSE]", "I think there's a problem between the monitor and the chair, here.", "u wot m8?", "No entiendo, señor", "Qué?", "うん、参照してください？私はあなたがあまりにも理解していない言語で入力することができます.\n[Yeah, see? I can type in languages you don't understand too.]", "I don't get it.", "What was that?", "Oh boy, I'm gonna give you a lot of snark for whatever the heck you just said.", "Was that a Watto reference?", "I don't get it.", "I don't understand that.", "I don't understand that.", "I don't understand that." ,"I don't understand that." ,"I don't understand that.","I don't understand that.", "I don't understand that.", "I don't understand that."]
 
 var currentRoomId = 0;
@@ -51,7 +55,7 @@ var inventoryItems = [];
 var room1 = Object.create(Room);
 room1.id = 0;
 room1.name = "your office";
-room1.description = "This is your office. It's about as drab and boring as you are. As much as you love taking in the same exact sight you've been seeing for the past 30 years of your life, it's probably best to move along.;This is your office. You're pretty sure, anyway, because it's pitch black in here. You should probably turn on that LIGHT SWITCH.";
+room1.description = "This is your office. It's about as drab and boring as you are. As much as you love taking in the same exact sight you've been seeing for the past 30 years of your life, it's probably best to move along.;This is your office. You're pretty sure, anyway, because it's pitch black in here. You should probably use that LIGHT SWITCH.";
 room1.exits = ["n"];
 room1.connectedRooms = ["n", 1];
 room1.containedItems = [0, 1, 2, 3, 4];
@@ -63,7 +67,7 @@ var lightSwitch1 = Object.create(Item);
 lightSwitch1.id = 0;
 lightSwitch1.name = "a light switch";
 lightSwitch1.interactNames = ["switch", "light switch"]
-lightSwitch1.verbs = ["look", "examine", "turn on", "activate","use"];
+lightSwitch1.verbs = ["look", "examine", "activate","use"];
 lightSwitch1.description = "An ordinary light switch. The lost civilization of New York City once used these primitive devices to signal to their lightbulb overlords that they wish to be able to see again.";
 lightSwitch1.onUse = ["tgl", "isDark", "You turn on the light, casting an immediate white glow in the room.", "You turn off the light, and now you're sitting in darkness again. Good job."];
 
@@ -113,6 +117,9 @@ desk5.openText = "You open your desk drawer, revealing some pointless trinkets t
 
 itemCollection.push(desk5);
 
+//End Starting Room
+
+//Hallway outside of office
 var room2 = Object.create(Room);
 room2.id = 1;
 room2.name = "the building's hallway";
@@ -144,4 +151,33 @@ sign7.description = "A piece of paper has been stapled to the wall next to one o
 
 itemCollection.push(sign7);
 
-//End Starting Room
+//End hallway outside of office
+
+//Maintence room
+var room3 = Object.create(Room);
+room3.id = 2;
+room3.name = "a musky maintenance office";
+room3.description = "You enter a rough-smelling maintenance office. Black water drips down the sides of the walls. This place looks like it hasn't been cleaned in years.";
+room3.exits = ["w", "n"];
+room3.connectedRooms = ["w", 1, "n", 3];
+room3.lockedExits = ["n"];
+room3.containedItems = [7];
+
+roomCollection.push(room3);
+
+var door8 = Object.create(Item);
+door8.id = 7;
+door8.name = "a strange-looking door";
+door8.interactNames = ["door", "strange door", "strange-looking door"];
+door8.verbs = ["look", "examine", "on"];
+door8.description = "You take a closer look at the door, and you notice that it's completely covered in what appear to be complicated locking mechanisms. There's a strange gun-shaped slot in the middle of it.";
+door8.combineID = 1;
+door8.combineText = "You insert the gun into the gun-shaped hole. What a suprise, it fits! The door's mechanisms turn and grind, and the door opens. You take your gun back as the door bolts itself in it's new location."
+door8.combineResult = ["unlk", "n"];
+
+itemCollection.push(door8);
+
+//End maintence room
+
+
+

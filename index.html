@@ -174,7 +174,11 @@
 				if(i == startIndex){
 					objectName += commandString[i];
 				} else if(i > startIndex) {
-					objectName += " " + commandString[i];
+					if(commandString[i] == "on"){
+						break;
+					} else {
+						objectName += " " + commandString[i];
+					}					
 				}
 			}
 			return objectName;
@@ -199,20 +203,18 @@
 
 		function handleMovement(direction){
 			var returnText = "";
-
 			if(roomCollection[currentRoomId].exits.indexOf(direction) != -1){
-				for(var i = 0; i < roomCollection[currentRoomId].connectedRooms.length; i = i + 2){
-					if(roomCollection[currentRoomId].connectedRooms.indexOf(direction) != -1){
-						currentRoomId = roomCollection[currentRoomId].connectedRooms[i + 1];
-						break;
-					}
+				if(roomCollection[currentRoomId].lockedExits.indexOf(direction) != -1){
+					return "The door is locked, you can't get through this way.";
+				} else if(roomCollection[currentRoomId].connectedRooms.indexOf(direction) != -1){
+					currentRoomId = roomCollection[currentRoomId].connectedRooms[roomCollection[currentRoomId].connectedRooms.indexOf(direction) + 1];
+					return handleExamine(['look']);
 				}
 			} else {
 				returnText = "You smack into a wall. Yet another bunch of brain cells you're never getting back."
 				return returnText;
 			}
-
-			return handleExamine(['look']);
+			
 		}
 
 		function handleTakeObject(commandString){
@@ -296,9 +298,37 @@
 			var reachableItems = getListOfUsableItems();
 			var requestedItemID = searchForRequestedItem(commandString, reachableItems);
 			if (requestedItemID == -1){
-				returnString = "You can't use something that doesn't exist!";
+				returnString = "You can't use what you don't have!";
 			} else {
 				if(itemCollection[requestedItemID].verbs.indexOf(verb) != -1){
+					if(commandString.indexOf("on") != -1){
+						//Item combination
+						var secondItemName = [];
+						for(i=commandString.indexOf("on");i<commandString.length;i++){
+							secondItemName.push(commandString[i]);
+						}
+						var recipientID = searchForRequestedItem(secondItemName, reachableItems);
+						if(recipientID != -1){
+							if(itemCollection[recipientID].combineID == itemCollection[requestedItemID].id){
+								returnString = itemCollection[recipientID].combineText;
+								switch(itemCollection[recipientID].combineResult[0]){
+									case "unlk":
+										roomCollection[currentRoomId].lockedExits = [];
+										var removeIndex = roomCollection[currentRoomId].containedItems.indexOf(recipientID)
+										roomCollection[currentRoomId].containedItems.splice(removeIndex, 1);
+								}
+								return returnString;
+							} else {
+								returnString = "You can't combine those items.";
+								return returnString;
+							}
+
+						} else {
+							returnString = "I have no idea what you're trying to use that on.";
+							return returnString;
+						}
+					}
+
 					switch(itemCollection[requestedItemID].onUse[0]){
 						case "tgl":
 							switch(itemCollection[requestedItemID].onUse[1]){
@@ -391,16 +421,16 @@
 						}
 						switch(exitSplit[y]){
 							case "n":
-								RoomDescription += "north";
+								RoomDescription += "north";							
 								break;
 							case "s":
-								RoomDescription += "south";
+								RoomDescription += "south";	
 								break;
 							case "e":
-								RoomDescription += "east";
+								RoomDescription += "east";	
 								break;
 							case "w":
-								RoomDEscription += "west";
+								RoomDescription += "west";		
 								break;
 						}						
 					}
