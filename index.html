@@ -163,7 +163,21 @@
 					case "examine":
 					case "read":
 						return handleExamine(commandString);
-						break;		
+						break;
+					case "kill":
+						return "Senseless violence is not the answer!"
+						break;
+					case "rape":
+						return "Uh, wow, holy shit. No."
+						break;
+					case "fuck":
+					case "shit":
+					case "balls":
+					case "tits":
+					case "dick":
+					case "ass":
+						return "WHOOPS! Can't do that in a Christian video game."
+						break;
 				}
 			} else {
 				//command word count 2 : all verbs with 2 words
@@ -177,6 +191,9 @@
 					case "talk to":
 					case "speak to":
 					return handleTalk(commandString);
+						break;
+					case "gosh darn":
+						return "Language, please!"
 						break;
 				}
 			}
